@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="term.js"></script>
+<script>
+
+	window.addEventListener('load', function() {
+
+		var socket = new WebSocket(
+				"wss://localhost:18443/sshwar_2.10-0.1/websocket/ssh");
+
+		socket.onopen = function() {
+
+			var term = new Terminal({
+				cols : 80,
+				rows : 24,
+				screenKeys : true
+			});
+
+			term.on('data', function(data) {
+				socket.send(data);
+			});
+
+			term.on('title', function(title) {
+				document.title = title;
+			});
+
+			term.open(document.body);
+
+			term.write('\x1b[31mWelcome to term.js!\x1b[m\r\n');
+
+			socket.onmessage = function(e) {
+				term.write(e.data)
+			}
+		};
+	});
+	
+</script>
+</head>
+<html>
+
+
+
+</html>
